@@ -3,7 +3,7 @@ __precompile__()
 module Collective
 
 import Base: size, getindex, isless, show
-using Iterators: subsets
+using IterTools: subsets
 using DataStructures: OrderedDict
 
 export Corpus, 
