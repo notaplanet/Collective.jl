@@ -35,15 +35,15 @@ function allfeatures()
         @feature((num_reverse_sequential_bigrams(word) >= j for j in 1:10), "has at least $j reverse sequential bigrams")
         @feature((num_cardinal_directions(word) == j for j in 1:6), "has $j cardinal direction abbreviations (NESW)")
         @feature((num_cardinal_directions(word) >= j for j in 1:6), "has at least $j cardinal direction abbreviations (NESW)")
-        @feature(ismatch(GREEK_REGEX, word), "contains a greek letter")
+        @feature(occursin(GREEK_REGEX, word), "contains a greek letter")
         @feature((longest_vowel_streak(word) == j for j in 2:5), "has $j vowels in a row")
         @feature((longest_vowel_streak(word) >= j for j in 2:5), "has at least $j vowels in a row")
         @feature((longest_consonant_streak(word) == j for j in 2:5), "has $j consonants in a row")
         @feature((longest_consonant_streak(word) >= j for j in 2:5), "has at least $j consonants in a row")
         @feature((num_morse_bits(letter_tallies(word)) == j for j in 1:10), "has $j morse bits ('i's and 't's)")
         @feature((num_morse_bits(letter_tallies(word)) >= j for j in 1:5), "has at least $j morse bits ('i's and 't's)")
-        @feature(ismatch(ENTIRELY_ELEMENTS_REGEX, word), "can be completely broken down into chemical element symbols")
-        @feature(ismatch(ENTIRELY_STATES_REGEX, word), "can be completely broken down into US state abbreviations")
+        @feature(occursin(ENTIRELY_ELEMENTS_REGEX, word), "can be completely broken down into chemical element symbols")
+        @feature(occursin(ENTIRELY_STATES_REGEX, word), "can be completely broken down into US state abbreviations")
         @feature((num_state_abbreviations(word) == j for j in 1:5), "contains $j US state abbreviations")
         @feature(in(word, MA_BELL_EXCHANGES_SET), "is a Ma Bell recommended telephone exchange name")
         @feature((has_transaddition(BitsTally(word), c) for c in 'a':'z'), "has a transaddition with letter '$c'")
@@ -244,7 +244,7 @@ function contains_repeated_vowel(tallies)
     false
 end
 
-contains_day_of_week(word) = ismatch(r"(sat)|(sun)|(mon)|(tue)|(wed)|(thu)|(fri)", word)
+contains_day_of_week(word) = occursin(r"(sat)|(sun)|(mon)|(tue)|(wed)|(thu)|(fri)", word)
 
 """
 Letters are alpha, then reverse alpha
@@ -393,12 +393,12 @@ num_morse_bits(tallies) = tallies['t' - 'a' + 1] + tallies['i' - 'a' + 1]
 
 function num_elemental_symbols(word)
     i = 0
-    foreach(m -> i += 1, eachmatch(SINGLE_ELEMENT_REGEX, word, true))
+    foreach(m -> i += 1, eachmatch(SINGLE_ELEMENT_REGEX, word, overlap=true))
     i
 end
 
 function num_state_abbreviations(word)
     i = 0
-    foreach(m -> i += 1, eachmatch(SINGLE_STATE_REGEX, word, true))
+    foreach(m -> i += 1, eachmatch(SINGLE_STATE_REGEX, word, overlap=true))
     i
 end

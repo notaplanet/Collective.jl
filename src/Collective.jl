@@ -14,7 +14,7 @@ export Corpus,
        best_clusters,
        common_features
 
-cleanup(s::String) = replace(lowercase(strip(s)), r"[^a-z]", "")
+cleanup(s::String) = replace(lowercase(strip(s)), r"[^a-z]" => "")
 
 wordlist(data::IO) = cleanup.(vec(readdlm(data, ',', String)))
 wordlist(s::String) = wordlist(IOBuffer(s))
