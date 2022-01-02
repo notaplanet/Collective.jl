@@ -33,7 +33,7 @@ show(io::IO, c::Corpus) = print(io, "Corpus with $(length(c.features.description
 
 function Corpus(words::AbstractArray{String}, features=allfeatures())
     featureset = FeatureSet(features)
-    frequencies = sum(featureset.evaluate(lowercase(word)) for word in words) / length(words)
+    frequencies = sum(Base.invokelatest(featureset.evaluate, lowercase(word)) for word in words) / length(words)
     frequencies = max.(frequencies, 1/length(words))
     Corpus(featureset, frequencies)
 end
