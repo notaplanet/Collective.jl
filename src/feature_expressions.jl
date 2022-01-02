@@ -151,6 +151,6 @@ function FeatureSet(features)
     description_expr = compile_descriptions(features)
     FeatureSet(features,
         eval(:((word) -> $(test_expr))),
-        eval(:(() -> $(evaluators_expr)))(),
-        eval(:(() -> $(description_expr)))())
+        Base.invokelatest(eval(:(() -> $(evaluators_expr)))),
+        Base.invokelatest(eval(:(() -> $(description_expr)))))
 end
