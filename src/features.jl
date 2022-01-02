@@ -1,3 +1,5 @@
+using DelimitedFiles
+
 function allfeatures()
     Feature[
         @feature((scrabble_score(word) == j for j in 1:26), "has scrabble score $j")
@@ -96,12 +98,12 @@ const VOWELS = UInt8[c - 'a' + 1 for c in "aeiouy"]
 const CONSONANTS = UInt8[c - 'a' + 1 for c in "bcdfghjklmnpqrstvwxyz"]
 const VOWELS_SET = Set(ALPHABET[VOWELS])
 const CONSONANTS_SET = Set(ALPHABET[CONSONANTS])
-const ELEMENT_DATA = readdlm(joinpath(Pkg.dir("Collective"), "data", "elements.tsv"), '\t', String, skipstart=1)
+const ELEMENT_DATA = readdlm(joinpath(pkgdir(Collective), "data", "elements.tsv"), '\t', String, skipstart=1)
 const ELEMENTAL_SYMBOLS = lowercase.(strip.(ELEMENT_DATA[:,2]))
-const STATES_DATA = readdlm(joinpath(Pkg.dir("Collective"), "data", "states.tsv"), '\t', String, skipstart=1)
+const STATES_DATA = readdlm(joinpath(pkgdir(Collective), "data", "states.tsv"), '\t', String, skipstart=1)
 const STATE_ABBREVIATIONS = strip.(lowercase.(STATES_DATA[:,2]))
-const WORDS = wordlist(open(joinpath(Pkg.dir("Collective"), "data", "113809of.fic")))
-const UNICODE_CHAR_DATA = readdlm(joinpath(Pkg.dir("Collective"), "data", "unicode_characters.tsv"), '\t', String, skipstart=1)
+const WORDS = wordlist(open(joinpath(pkgdir(Collective), "data", "113809of.fic")))
+const UNICODE_CHAR_DATA = readdlm(joinpath(pkgdir(Collective), "data", "unicode_characters.tsv"), '\t', String, skipstart=1)
 const UNICODE_CHARACTERS = Set(cleanup.(UNICODE_CHAR_DATA[:,1]))
 
 const bitstallies = Set(BitsTally.(WORDS))
@@ -139,7 +141,7 @@ const ENTIRELY_STATES_REGEX = Regex("^($(join((parenwrap(s) for s in STATE_ABBRE
 
 const GREEK_REGEX = r"(alpha)|(beta)|(gamma)|(delta)|(epsilon)|(zeta)|(eta)|(theta)|(iota)|(kappa)|(lambda)|(mu)|(nu)|(omicron)|(pi)|(rho)|(sigma)|(tau)|(upsilon)|(phi)|(chi)|(psi)|(omega)"
 
-const MA_BELL_EXCHANGES_SET = Set(lowercase.(readdlm(joinpath(Pkg.dir("Collective"), "data", "ma_bell_exchanges.tsv"), '\t', String)))
+const MA_BELL_EXCHANGES_SET = Set(lowercase.(readdlm(joinpath(pkgdir(Collective), "data", "ma_bell_exchanges.tsv"), '\t', String)))
 
 isconsonant(char) = char in CONSONANTS_SET
 isvowel(char) = char in VOWELS_SET
