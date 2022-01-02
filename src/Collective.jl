@@ -24,7 +24,7 @@ import .BitsTallies: BitsTally, isanagram, istransaddition
 include("feature_expressions.jl")
 include("features.jl")
 
-type Corpus{F}
+mutable struct Corpus{F}
     features::FeatureSet{F}
     frequencies::Vector{Float64}
 end
@@ -38,7 +38,7 @@ function Corpus(words::AbstractArray{String}, features=allfeatures())
     Corpus(featureset, frequencies)
 end
 
-immutable FeatureResult
+struct FeatureResult
     description::String
     evaluate::Function
     satisfied::BitArray{1}
@@ -96,7 +96,7 @@ function best_feature(corpus::Corpus, vals::AbstractArray{BitArray{1}})
                   p)
 end
 
-immutable Cluster
+struct Cluster
     words::Vector{String}
     feature::FeatureResult
 end

@@ -20,7 +20,7 @@ letter. We store the counts for the letter 'a' in the low-order bits, which
 leaves the awkward 3-bit block for 'z'. So this will overflow if a word
 contains more than 7 'z's. or more than 31 of any other letter.
 """
-immutable BitsTally
+struct BitsTally
     data::UInt128
 
     BitsTally(data=0) = new(data)
