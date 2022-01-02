@@ -1,5 +1,5 @@
 macro feature(ex, description::String="")
-    Expr(:call, :Feature, Expr(:quote, ex), Expr(:quote, Expr(:quote, description)))
+    Expr(:call, :Feature, Expr(:quote, ex), Expr(:quote, Expr(:call, string, description)))
 end
 
 macro feature(ex, description::Expr)
