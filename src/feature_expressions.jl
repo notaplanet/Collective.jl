@@ -1,5 +1,5 @@
 macro feature(ex, description::String="")
-    Expr(:call, :Feature, Expr(:quote, ex), Expr(:quote, Expr(:quote, description)))
+    Expr(:call, :Feature, Expr(:quote, ex), Expr(:quote, Expr(:call, string, description)))
 end
 
 macro feature(ex, description::Expr)
@@ -45,7 +45,7 @@ function cacheify(expr::Expr, var::Symbol)
     Expr(:block, [v[2] for v in values(setup)]..., expr)
 end
 
-immutable Feature
+struct Feature
     expr::Expr
     args::Vector{Tuple{Symbol, Expr}}
     length::Int
@@ -105,7 +105,7 @@ function compile_descriptions(features::Vector{Feature})
     values = gensym(:values)
     loop_var = gensym(:i)
     result = quote
-        $values = Vector{String}($(num_features))
+        $values = Vector{String}(undef, $(num_features))
         $loop_var = 1
     end
     for (i, feat) in enumerate(features)
@@ -124,7 +124,7 @@ function compile_evaluators(features::Vector{Feature})
     values = gensym(:values)
     loop_var = gensym(:i)
     result = quote
-        $values = Vector{Function}($(num_features))
+        $values = Vector{Function}(undef, $(num_features))
         $loop_var = 1
     end
     for (i, feat) in enumerate(features)
@@ -138,7 +138,7 @@ function compile_evaluators(features::Vector{Feature})
     result
 end
 
-immutable FeatureSet{F}
+struct FeatureSet{F}
     features::Vector{Feature}
     evaluate::F
     evaluators::Vector{Function}
@@ -151,6 +151,6 @@ function FeatureSet(features)
     description_expr = compile_descriptions(features)
     FeatureSet(features,
         eval(:((word) -> $(test_expr))),
-        eval(:(() -> $(evaluators_expr)))(),
-        eval(:(() -> $(description_expr)))())
+        Base.invokelatest(eval(:(() -> $(evaluators_expr)))),
+        Base.invokelatest(eval(:(() -> $(description_expr)))))
 end

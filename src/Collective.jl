@@ -3,7 +3,7 @@ __precompile__()
 module Collective
 
 import Base: size, getindex, isless, show
-using Iterators: subsets
+using IterTools: subsets
 using DataStructures: OrderedDict
 
 export Corpus, 
@@ -14,7 +14,7 @@ export Corpus,
        best_clusters,
        common_features
 
-cleanup(s::String) = replace(lowercase(strip(s)), r"[^a-z]", "")
+cleanup(s::String) = replace(lowercase(strip(s)), r"[^a-z]" => "")
 
 wordlist(data::IO) = cleanup.(vec(readdlm(data, ',', String)))
 wordlist(s::String) = wordlist(IOBuffer(s))
@@ -24,7 +24,7 @@ import .BitsTallies: BitsTally, isanagram, istransaddition
 include("feature_expressions.jl")
 include("features.jl")
 
-type Corpus{F}
+mutable struct Corpus{F}
     features::FeatureSet{F}
     frequencies::Vector{Float64}
 end
@@ -33,12 +33,12 @@ show(io::IO, c::Corpus) = print(io, "Corpus with $(length(c.features.description
 
 function Corpus(words::AbstractArray{String}, features=allfeatures())
     featureset = FeatureSet(features)
-    frequencies = sum(featureset.evaluate(lowercase(word)) for word in words) / length(words)
+    frequencies = sum(Base.invokelatest(featureset.evaluate, lowercase(word)) for word in words) / length(words)
     frequencies = max.(frequencies, 1/length(words))
     Corpus(featureset, frequencies)
 end
 
-immutable FeatureResult
+struct FeatureResult
     description::String
     evaluate::Function
     satisfied::BitArray{1}
@@ -96,7 +96,7 @@ function best_feature(corpus::Corpus, vals::AbstractArray{BitArray{1}})
                   p)
 end
 
-immutable Cluster
+struct Cluster
     words::Vector{String}
     feature::FeatureResult
 end
